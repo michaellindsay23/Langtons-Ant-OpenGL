@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/michael-lindsay/langtons_ant/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
