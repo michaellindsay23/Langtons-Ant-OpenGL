@@ -19,6 +19,7 @@
         glm
         cmake
         libGL
+        mesa
       ];
     };
   };
