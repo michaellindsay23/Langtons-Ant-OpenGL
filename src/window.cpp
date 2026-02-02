@@ -8,11 +8,25 @@
 
 int WIDTH = 400;
 int HEIGHT = 400;
+GLubyte* PixelBuffer;
+int PixelBufferSize;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
   glViewport(0, 0, width, height);
   WIDTH = width;
   HEIGHT = height;
+  PixelBufferSize = WIDTH * HEIGHT * 3;
+  PixelBuffer = new GLubyte[PixelBufferSize];
+  for (int i = 0; i < PixelBufferSize; i += 3) {
+    PixelBuffer[i]     = 0;
+    PixelBuffer[i + 1] = 0;
+    PixelBuffer[i + 2] = 0;
+  }
+  //PixelBuffer[729] = 255;
+  //PixelBuffer[730] = 255;
+  //PixelBuffer[731] = 255;
+  
+
 }
 
 int main(void) {
@@ -37,7 +51,7 @@ int main(void) {
     return -1;
   }
 
-  glViewport(0, 0, 800, 600);
+  glViewport(0, 0, WIDTH, HEIGHT);
 
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
@@ -48,11 +62,10 @@ int main(void) {
 
   // Plane definition
   float vertices[] = {
-    // positions         // texture 
-   -1.0f, -1.0f, 0.0f,  -1.0f, -1.0f,  // bottom left
-    1.0f, -1.0f, 0.0f,  -1.0f,  1.0f,  // bottom right
-   -1.0f,  1.0f, 0.0f,   1.0f, -1.0f,  // top left
-    1.0f,  1.0f, 0.0f,   1.0f,  1.0f,  // top right
+   -0.5f, -0.5f, 0.0f,  0.0f, 0.0f,
+    0.5f, -0.5f, 0.0f,  1.0f, 0.0f,
+   -0.5f,  0.5f, 0.0f,  0.0f, 1.0f,
+    0.5f,  0.5f, 0.0f,  1.0f, 1.0f
   };
 
   unsigned int indices[] = {
@@ -60,26 +73,31 @@ int main(void) {
     0, 2, 3   // second triangle
   };
 
-  int PixelBufferSize = WIDTH * HEIGHT * 3;
-  GLubyte* PixelBuffer = new GLubyte[PixelBufferSize];
+  
+  PixelBufferSize = WIDTH * HEIGHT * 3;
+  PixelBuffer = new GLubyte[PixelBufferSize];
   for (int i = 0; i < PixelBufferSize; i += 3) {
     PixelBuffer[i]     = 0;
     PixelBuffer[i + 1] = 0;
     PixelBuffer[i + 2] = 0;
   }
 
-  PixelBuffer[729] = 255;
-  PixelBuffer[730] = 255;
-  PixelBuffer[731] = 255;
+  int loc = WIDTH * HEIGHT * 3 / 2;
+  PixelBuffer[loc] = 255;
+  PixelBuffer[loc + 1] = 255;
+  PixelBuffer[loc + 2] = 255;
+  //for (int i = 0; i < 2400; i++) {
+  //  PixelBuffer[i] = 255;
+  //}
 
   unsigned int textureID;
   glGenTextures(1, &textureID);
   glBindTexture(GL_TEXTURE_2D, textureID);
 
-  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, WIDTH, HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, PixelBuffer);
   glGenerateMipmap(GL_TEXTURE_2D);
