@@ -20,6 +20,8 @@
         cmake
         libGL
         mesa
+        gdb
+        valgrind
       ];
     };
   };

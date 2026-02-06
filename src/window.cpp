@@ -2,64 +2,51 @@
 
 #include "GL/gl.h"
 #include <GLFW/glfw3.h>
+
+#include "Grid.h"
 #include "shader_s.h"
+#include "Ant.h"
+#include "Tile.h"
 
 #include <iostream>
 
 int WIDTH = 400;
 int HEIGHT = 400;
 GLubyte* PixelBuffer;
-int PixelBufferSize;
+
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
   glViewport(0, 0, width, height);
-  WIDTH = width;
-  HEIGHT = height;
-  PixelBufferSize = WIDTH * HEIGHT * 3;
-  PixelBuffer = new GLubyte[PixelBufferSize];
-  for (int i = 0; i < PixelBufferSize; i += 3) {
-    PixelBuffer[i]     = 0;
-    PixelBuffer[i + 1] = 0;
-    PixelBuffer[i + 2] = 0;
-  }
-  //PixelBuffer[729] = 255;
-  //PixelBuffer[730] = 255;
-  //PixelBuffer[731] = 255;
-  
-
 }
 
+
+void run_next_frame(Grid grid) {
+  grid.update();
+
+  int index;
+  for (int y = 0; y < HEIGHT; y++) {
+    for (int x = 0; x < WIDTH; x++) {
+      index = x * y * 3;
+
+      switch (grid.get(y, x)->color) {
+        case Color::BLACK:
+          PixelBuffer[index]     = 0;
+          PixelBuffer[index + 1] = 0;
+          PixelBuffer[index + 1] = 0;
+          break;
+        case Color::WHITE:
+          PixelBuffer[index]     = 255;
+          PixelBuffer[index + 1] = 255;
+          PixelBuffer[index + 2] = 255;
+          break;
+      }
+    }
+  }
+}
+
+
+
 int main(void) {
-  GLFWwindow* window;
-
-  // Initialize GLFW
-  if (!glfwInit())
-    return -1;
-
-  // Create the window
-  window = glfwCreateWindow(400, 400, "Ant", NULL, NULL);
-  if (!window) {
-    std::cout << "Failed to create GLFW window" << std::endl;
-    glfwTerminate();
-    return -1;
-  }
-
-  glfwMakeContextCurrent(window);
-
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-    std::cout << "Failed to initialize GLAD" << std::endl;
-    return -1;
-  }
-
-  glViewport(0, 0, WIDTH, HEIGHT);
-
-  glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-
-
-  Shader Shader("../src/shader.vs", "../src/shader.fs");
-
-
   // Plane definition
   float vertices[] = {
    -0.5f, -0.5f, 0.0f,  0.0f, 0.0f,
@@ -73,22 +60,49 @@ int main(void) {
     0, 2, 3   // second triangle
   };
 
-  
-  PixelBufferSize = WIDTH * HEIGHT * 3;
-  PixelBuffer = new GLubyte[PixelBufferSize];
-  for (int i = 0; i < PixelBufferSize; i += 3) {
-    PixelBuffer[i]     = 0;
-    PixelBuffer[i + 1] = 0;
-    PixelBuffer[i + 2] = 0;
+
+
+  // Initialize grid and ant
+  Grid grid = Grid(WIDTH, HEIGHT);
+
+  grid.add_ant(HEIGHT/2, WIDTH/2, Orientation::UP);
+
+
+
+  // Texture
+  PixelBuffer = new GLubyte[HEIGHT * WIDTH * 3];
+  run_next_frame(grid);
+
+
+  GLFWwindow* window;
+
+  // Initialize GLFW
+  if (!glfwInit())
+    return -1;
+
+  // Create the window
+  window = glfwCreateWindow(WIDTH, HEIGHT, "Ant", NULL, NULL);
+  if (!window) {
+    std::cout << "Failed to create GLFW window" << "\n";
+    glfwTerminate();
+    return -1;
   }
 
-  int loc = WIDTH * HEIGHT * 3 / 2;
-  PixelBuffer[loc] = 255;
-  PixelBuffer[loc + 1] = 255;
-  PixelBuffer[loc + 2] = 255;
-  //for (int i = 0; i < 2400; i++) {
-  //  PixelBuffer[i] = 255;
-  //}
+  glfwMakeContextCurrent(window);
+
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    std::cout << "Failed to initialize GLAD" << "\n";
+    return -1;
+  }
+
+  glViewport(0, 0, WIDTH, HEIGHT);
+
+  glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+
+
+  Shader Shader("../src/shader.vs", "../src/shader.fs");
+
 
   unsigned int textureID;
   glGenTextures(1, &textureID);
@@ -128,7 +142,11 @@ int main(void) {
   glEnableVertexAttribArray(1); 
 
 
+  glBindTexture(GL_TEXTURE_2D, 0);
+
+
   // Main loop
+  int count = 0;
   while (!glfwWindowShouldClose(window)) {
     //glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -139,8 +157,23 @@ int main(void) {
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+    if (count == 30) {
+      run_next_frame(grid);
+      
+      glBindTexture(GL_TEXTURE_2D, textureID);
+
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, WIDTH, HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, PixelBuffer);
+      glGenerateMipmap(GL_TEXTURE_2D);
+
+      glBindTexture(GL_TEXTURE_2D, 0);
+      
+      count = 0;
+    }
+
     glfwSwapBuffers(window);
     glfwPollEvents();
+
+    count++;
   }
 
   glfwTerminate();
