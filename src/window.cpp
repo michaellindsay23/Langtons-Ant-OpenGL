@@ -10,8 +10,8 @@
 
 #include <iostream>
 
-int WIDTH = 400;
-int HEIGHT = 400;
+int WIDTH = 1000;
+int HEIGHT = 1000;
 GLubyte* PixelBuffer;
 
 
@@ -26,7 +26,7 @@ void run_next_frame(Grid grid) {
   int index;
   for (int y = 0; y < HEIGHT; y++) {
     for (int x = 0; x < WIDTH; x++) {
-      index = x * y * 3;
+      index = ((y * WIDTH) + x) * 3;
 
       switch (grid.get(y, x)->color) {
         case Color::BLACK:

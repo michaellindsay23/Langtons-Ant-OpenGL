@@ -5,6 +5,7 @@
 #include "Ant.h"
 
 #include <vector>
+#include <iostream>
 
 using namespace std;
 
@@ -60,6 +61,8 @@ class Grid {
           ant_pos_x -= 1;
           break;
       }
+
+      std::cout << ant_pos_x << "\n";
 
       ant.current = &grid[ant_pos_y][ant_pos_x];
     }
