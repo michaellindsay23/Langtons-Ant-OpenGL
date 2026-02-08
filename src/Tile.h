@@ -1,7 +1,7 @@
 #ifndef TILE
 #define TILE
 
-enum class Color {
+enum Color {
   WHITE,
   BLACK
 };

@@ -3,6 +3,8 @@
 
 #include "Tile.h"
 
+#include <iostream>
+
 enum Orientation {
   UP,
   RIGHT,
@@ -13,56 +15,26 @@ enum Orientation {
 class Tile;
 class Ant {
   public:
-    Tile* current;
     Orientation orientation;
 
-    Ant() {
-      Tile temp = Tile(Color::BLACK);
-      current = &temp;
-      orientation = UP;
-    }
+    int ant_pos_x;
+    int ant_pos_y;
     
-    Ant(Tile* t, Orientation o) {
-      delete current;
+    Ant() :
+      orientation(UP),
+      ant_pos_y(0),
+      ant_pos_x(0)
+    {}
+    
+    Ant(int y, int x, Orientation o) :
+      orientation(o),
+      ant_pos_y(y),
+      ant_pos_x(x)
+    {}
 
-      current = t;
-      orientation = o;
-    }
-
-    void move() {
-      if (current->color == Color::WHITE) {
-        switch (orientation) {
-          case UP:
-            orientation = RIGHT;
-            break;
-          case RIGHT:
-            orientation = DOWN;
-            break;
-          case DOWN:
-            orientation = LEFT;
-            break;
-          case LEFT:
-            orientation = UP;
-            break;
-        }  
-      } else {
-        switch (orientation) {
-          case UP:
-            orientation = LEFT;
-            break;
-          case LEFT:
-            orientation = DOWN;
-            break;
-          case DOWN:
-            orientation = RIGHT;
-            break;
-          case RIGHT:
-            orientation = UP;
-            break;
-        }
-      }
-
-      current->swap_color();
+    void set_pos(int y, int x) {
+      ant_pos_y = y;
+      ant_pos_x = x;
     }
 };
 
