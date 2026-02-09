@@ -13,13 +13,12 @@ class Grid {
   private:
     vector<vector<Tile>> grid;
 
-    Ant ant;
+    Ant* ant;
 
-  public:
     int width;
     int height;
 
-
+  public:
     Grid(int wid, int hei) :
       grid(hei, vector<Tile>(wid)),
       width(wid),
@@ -36,65 +35,66 @@ class Grid {
       return &grid[y][x];
     }
 
-    void add_ant(int y, int x, Orientation o) {
-      ant = Ant(y, x, o);
+    void add_ant(Ant* a) {
+      ant = a;
     }
 
     void update() {
-      std::cout << ant.orientation << " " << ant.ant_pos_y << " " << ant.ant_pos_x << "\n";
+      std::cout << ant->orientation << " " << ant->ant_pos_y << " " << ant->ant_pos_x << "\n";
       // Change facing direction
-      if (grid[ant.ant_pos_y][ant.ant_pos_y].color == Color::WHITE) {
-        switch (ant.orientation) {
+      if (grid[ant->ant_pos_y][ant->ant_pos_y].color == Color::WHITE) {
+        switch (ant->orientation) {
           case UP:
-            ant.orientation = RIGHT;
+            ant->orientation = RIGHT;
             break;
           case RIGHT:
-            ant.orientation = DOWN;
+            ant->orientation = DOWN;
             break;
           case DOWN:
-            ant.orientation = LEFT;
+            ant->orientation = LEFT;
             break;
           case LEFT:
-            ant.orientation = UP;
+            ant->orientation = UP;
             break;
         }  
       } else {
-        switch (ant.orientation) {
+        switch (ant->orientation) {
           case UP:
-            ant.orientation = LEFT;
+            ant->orientation = LEFT;
             break;
           case LEFT:
-            ant.orientation = DOWN;
+            ant->orientation = DOWN;
             break;
           case DOWN:
-            ant.orientation = RIGHT;
+            ant->orientation = RIGHT;
             break;
           case RIGHT:
-            ant.orientation = UP;
+            ant->orientation = UP;
             break;
         }
       }
 
       // Swap color of current tile
-      grid[ant.ant_pos_y][ant.ant_pos_y].swap_color();
+      grid[ant->ant_pos_y][ant->ant_pos_y].swap_color();
 
-      std::cout << ant.orientation << " " << ant.ant_pos_y << " " << ant.ant_pos_x << "\n";
+      std::cout << ant->orientation << " " << ant->ant_pos_y << " " << ant->ant_pos_x << "\n";
       // move forward
-      switch (ant.orientation) {
+      switch (ant->orientation) {
         case UP:
-          ant.set_pos(ant.ant_pos_y - 1, ant.ant_pos_x);
+          ant->set_pos(ant->ant_pos_y - 1, ant->ant_pos_x);
           break;
         case RIGHT:
-          ant.set_pos(ant.ant_pos_y, ant.ant_pos_x + 1);
+          ant->set_pos(ant->ant_pos_y, ant->ant_pos_x + 1);
           break;
         case DOWN:
-          ant.set_pos(ant.ant_pos_y + 1, ant.ant_pos_x);
+          ant->set_pos(ant->ant_pos_y + 1, ant->ant_pos_x);
           break;
         case LEFT:
-          ant.set_pos(ant.ant_pos_y, ant.ant_pos_x - 1);
+          ant->set_pos(ant->ant_pos_y, ant->ant_pos_x - 1);
           break;
       }
-      std::cout << ant.orientation << " " << ant.ant_pos_y << " " << ant.ant_pos_x << "\n";
+
+      std::cout << ant->orientation << " " << ant->ant_pos_y << " " << ant->ant_pos_x << "\n\n";
     }
 };
 

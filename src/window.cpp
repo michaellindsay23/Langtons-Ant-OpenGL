@@ -10,8 +10,8 @@
 
 #include <iostream>
 
-int WIDTH = 1000;
-int HEIGHT = 1000;
+int WIDTH = 100;
+int HEIGHT = 100;
 GLubyte* PixelBuffer;
 
 
@@ -65,7 +65,9 @@ int main(void) {
   // Initialize grid and ant
   Grid grid = Grid(WIDTH, HEIGHT);
 
-  grid.add_ant(HEIGHT/2, WIDTH/2, Orientation::UP);
+  Ant ant = Ant(HEIGHT/2, WIDTH/2, Orientation::UP);
+  grid.add_ant(&ant);
+  
 
 
 
