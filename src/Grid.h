@@ -11,7 +11,7 @@ using namespace std;
 
 class Grid {
   private:
-    vector<vector<Tile>> grid;
+    vector<vector<Tile*>> grid;
 
     Ant* ant;
 
@@ -20,19 +20,23 @@ class Grid {
 
   public:
     Grid(int wid, int hei) :
-      grid(hei, vector<Tile>(wid)),
+      grid(hei, vector<Tile*>(wid)),
       width(wid),
       height(hei)
-    {
-      for (int y = 0; y < hei; y++) {
-        for (int x = 0; x < wid; x++) {
-          grid[y][x] = Tile(Color::BLACK);
+    {}
+
+    void construct(vector<Tile> tiles) {
+      int index = 0;
+      for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+          grid[y][x] = &tiles[index];
+          index++;
         }
       }
     }
 
     Tile* get(int y, int x) {
-      return &grid[y][x];
+      return grid[y][x];
     }
 
     void add_ant(Ant* a) {
@@ -40,9 +44,8 @@ class Grid {
     }
 
     void update() {
-      std::cout << ant->orientation << " " << ant->ant_pos_y << " " << ant->ant_pos_x << "\n";
       // Change facing direction
-      if (grid[ant->ant_pos_y][ant->ant_pos_y].color == Color::WHITE) {
+      if (grid[ant->ant_pos_y][ant->ant_pos_x]->color == WHITE) {
         switch (ant->orientation) {
           case UP:
             ant->orientation = RIGHT;
@@ -75,26 +78,23 @@ class Grid {
       }
 
       // Swap color of current tile
-      grid[ant->ant_pos_y][ant->ant_pos_y].swap_color();
+      grid[ant->ant_pos_y][ant->ant_pos_x]->swap_color();
 
-      std::cout << ant->orientation << " " << ant->ant_pos_y << " " << ant->ant_pos_x << "\n";
       // move forward
       switch (ant->orientation) {
         case UP:
-          ant->set_pos(ant->ant_pos_y - 1, ant->ant_pos_x);
+          ant->set_pos(ant->ant_pos_y + 1, ant->ant_pos_x);
           break;
         case RIGHT:
           ant->set_pos(ant->ant_pos_y, ant->ant_pos_x + 1);
           break;
         case DOWN:
-          ant->set_pos(ant->ant_pos_y + 1, ant->ant_pos_x);
+          ant->set_pos(ant->ant_pos_y - 1, ant->ant_pos_x);
           break;
         case LEFT:
           ant->set_pos(ant->ant_pos_y, ant->ant_pos_x - 1);
           break;
       }
-
-      std::cout << ant->orientation << " " << ant->ant_pos_y << " " << ant->ant_pos_x << "\n\n";
     }
 };
 

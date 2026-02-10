@@ -9,10 +9,15 @@
 #include "Tile.h"
 
 #include <iostream>
+#include <vector>
 
-int WIDTH = 100;
-int HEIGHT = 100;
+using namespace std;
+
+int WIDTH = 400;
+int HEIGHT = 400;
 GLubyte* PixelBuffer;
+
+vector<Tile> tiles;
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
@@ -32,7 +37,7 @@ void run_next_frame(Grid grid) {
         case Color::BLACK:
           PixelBuffer[index]     = 0;
           PixelBuffer[index + 1] = 0;
-          PixelBuffer[index + 1] = 0;
+          PixelBuffer[index + 2] = 0;
           break;
         case Color::WHITE:
           PixelBuffer[index]     = 255;
@@ -63,7 +68,14 @@ int main(void) {
 
 
   // Initialize grid and ant
+  tiles = vector<Tile>(HEIGHT * WIDTH);
+
+  for (int i = 0; i < tiles.size(); i++) {
+    tiles[i] = Tile(Color::BLACK);
+  }
+
   Grid grid = Grid(WIDTH, HEIGHT);
+  grid.construct(tiles);
 
   Ant ant = Ant(HEIGHT/2, WIDTH/2, Orientation::UP);
   grid.add_ant(&ant);
@@ -144,12 +156,12 @@ int main(void) {
   glEnableVertexAttribArray(1); 
 
 
-  glBindTexture(GL_TEXTURE_2D, 0);
+  //glBindTexture(GL_TEXTURE_2D, 0);
 
 
   // Main loop
-  int count = 0;
-  while (!glfwWindowShouldClose(window)) {
+  //int count = 0;
+  //while (!glfwWindowShouldClose(window)) {
     //glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -159,7 +171,7 @@ int main(void) {
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-    if (count == 30) {
+    //if (count == 30) {
       run_next_frame(grid);
       
       glBindTexture(GL_TEXTURE_2D, textureID);
@@ -169,14 +181,14 @@ int main(void) {
 
       glBindTexture(GL_TEXTURE_2D, 0);
       
-      count = 0;
-    }
+    //  count = 0;
+    //}
 
     glfwSwapBuffers(window);
     glfwPollEvents();
 
-    count++;
-  }
+    //count++;
+  //}
 
   glfwTerminate();
   return 0;
