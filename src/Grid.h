@@ -11,29 +11,19 @@ using namespace std;
 
 class Grid {
   private:
-    vector<vector<Tile*>> grid;
-
     Ant* ant;
 
     int width;
     int height;
 
   public:
+    vector<vector<Tile*>> grid;
+
     Grid(int wid, int hei) :
       grid(hei, vector<Tile*>(wid)),
       width(wid),
       height(hei)
     {}
-
-    void construct(vector<Tile> tiles) {
-      int index = 0;
-      for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-          grid[y][x] = &tiles[index];
-          index++;
-        }
-      }
-    }
 
     Tile* get(int y, int x) {
       return grid[y][x];

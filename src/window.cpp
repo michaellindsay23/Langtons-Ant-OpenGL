@@ -75,7 +75,14 @@ int main(void) {
   }
 
   Grid grid = Grid(WIDTH, HEIGHT);
-  grid.construct(tiles);
+
+  int index = 0;
+  for (int y = 0; y < HEIGHT; y++) {
+    for (int x = 0; x < WIDTH; x++) {
+      grid.grid[y][x] = &tiles[index];
+      index++;
+    }
+  }
 
   Ant ant = Ant(HEIGHT/2, WIDTH/2, Orientation::UP);
   grid.add_ant(&ant);
@@ -161,7 +168,7 @@ int main(void) {
 
   // Main loop
   //int count = 0;
-  //while (!glfwWindowShouldClose(window)) {
+  while (!glfwWindowShouldClose(window)) {
     //glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -188,7 +195,7 @@ int main(void) {
     glfwPollEvents();
 
     //count++;
-  //}
+  }
 
   glfwTerminate();
   return 0;
